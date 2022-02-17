@@ -1,0 +1,76 @@
+
+pipeline {
+   
+   agent {
+      kubernetes {
+         yamlFile 'KubernetesPod.yaml'
+      }
+   }
+   
+   environment { 
+	   
+	//DOCKER_IMAGE = 'nodejs/app'
+	//disable old jenkins jobs
+	// final test
+	DOCKER_IMAGE = 'nodejs'
+	   
+	//ECR_REPO = '007293158826.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs'
+	
+      APP_VERSION = "${BUILD_ID}"
+      APP_ENV = "${BRANCH_NAME}"
+      
+      AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
+      AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+      AWS_DEFAULT_REGION    = 'ap-southeast-1'
+	//AWS_DEFAULT_REGION    = 'us-east-1'
+	AWS_DEFAULT_OUTPUT    = 'json'
+	   
+	//ECR_REPO = '007293158826.dkr.ecr.' + ${AWS_DEFAULT_REGION} + '.amazonaws.com/nodejs'
+	//ECR_REPO = '007293158826.dkr.ecr.us-east-1.amazonaws.com/nodejs'
+	ECR_REPO = '130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs'
+	   
+	DEVELOP_TASK    = 'nodejs-develop-task'
+	DEVELOP_CLUSTER = 'nodejs-develop-cluster1'
+	DEVELOP_SERVICE = 'nodejs-develop-srv'
+	   
+	RELEASE_TASK    = 'nodejs-release-task'
+	RELEASE_CLUSTER = 'nodejs-release-cluster'
+	RELEASE_SERVICE = 'nodejs-release-srv'
+   }
+
+   stages {
+
+      stage('[NODEJS] Build & push') {
+         steps {
+            container('docker') {
+               sh '''
+                 apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
+                 aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                 aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                 aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                 docker build -t ${ECR_REPO}:${BUILD_ID} .
+                 docker push ${ECR_REPO}:${BUILD_ID}
+               '''
+            }
+         }
+      }
+
+      stage('[NODEJS] Deploy to DEVELOP') {
+            when {
+                branch 'develop' 
+	         }
+            steps {
+               container('deploy-helm') {
+                  sh '''
+                  apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+                  mkdir -p $HOME/.kube
+                  cp $KUBE_CONFIG $HOME/.kube/config
+                  helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO}:${BUILD_ID}"
+                '''
+               }
+            }
+      }
+   }
+}

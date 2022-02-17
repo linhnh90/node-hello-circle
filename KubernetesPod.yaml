@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    some-label: jenkins-pod
+spec:
+  # securityContext:
+  #   runAsUser: 1000 # default UID of jenkins user in agent image
+  #   runAsGroup: 3000
+  #   fsGroup: 2000
+  volumes:
+    - name: docker-socket
+      emptyDir: {}
+  containers:
+    - name: docker
+      image: docker:19.03.1
+      # resources:
+      #   requests:
+      #     memory: "64Mi"
+      #     cpu: "250m"
+      #   limits:
+      #     memory: "128Mi"
+      #     cpu: "500m"
+      command:
+        - sleep
+      args:
+        - 99d
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run
+    - name: docker-daemon
+      image: docker:19.03.1-dind
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run
+    - name: deploy-helm
+      image: alpine/helm:3.2.4
+      command:
+        - sleep
+      args:
+        - 99d
