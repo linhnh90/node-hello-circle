@@ -30,7 +30,7 @@ pipeline {
       stage('[NODEJS] Build & push nodejs') {
          when {
             expression {
-               return params.BUILD_APP == 'nodejs'
+               params.BUILD_APP == 'nodejs'
             }
          }
          steps {
@@ -50,7 +50,7 @@ pipeline {
       stage('[PYTHON] Build & push python') {
          when {
             expression {
-               return params.BUILD_APP == 'python'
+               params.BUILD_APP == 'python'
             }
          }
          steps {
@@ -69,7 +69,7 @@ pipeline {
 
       stage('[NODEJS] Deploy Nodejs') {
          when {
-               return params.BUILD_APP == 'nodejs'
+               params.BUILD_APP == 'nodejs'
          }
          steps {
             container('deploy-helm') {
@@ -87,7 +87,7 @@ pipeline {
 
       stage('[PYTHON] Deploy Python') {
          when {
-               return params.BUILD_APP == 'python'
+               params.BUILD_APP == 'python'
          }
          steps {
             container('deploy-helm') {
@@ -105,7 +105,7 @@ pipeline {
 
       stage('[ALL] Build and Push all') {
          when {
-            return params.BUILD_APP == 'all'
+            params.BUILD_APP == 'all'
          }
          parallel {
             stage('[NODEJS] Build & push nodejs') {
@@ -140,7 +140,7 @@ pipeline {
       }
       stage('[all] Deploy all') {
          when {
-            return params.BUILD_APP == 'all'
+            params.BUILD_APP == 'all'
          }
          parallel {
             stage('[NODEJS] Deoloy nodejs') {
