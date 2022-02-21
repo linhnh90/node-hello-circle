@@ -7,7 +7,8 @@ pipeline {
    }
    parameters {
       choice(
-         choices: 'all\nnodejs\npython',
+         choices: ['all', 'nodejs', 'python'],
+         description: ''
          name: 'BUILD_APP'
       )
    }
@@ -80,12 +81,12 @@ pipeline {
          steps {
             container('deploy-helm') {
                sh '''
-               apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-               curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-               chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-               mkdir -p $HOME/.kube
-               cp $KUBE_CONFIG $HOME/.kube/config
-               helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+                 apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+                 chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+                 mkdir -p $HOME/.kube
+                 cp $KUBE_CONFIG $HOME/.kube/config
+                 helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                '''
             }
          }
@@ -98,12 +99,12 @@ pipeline {
          steps {
             container('deploy-helm') {
                sh '''
-               apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-               curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-               chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-               mkdir -p $HOME/.kube
-               cp $KUBE_CONFIG $HOME/.kube/config
-               helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+                 apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+                 chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+                 mkdir -p $HOME/.kube
+                 cp $KUBE_CONFIG $HOME/.kube/config
+                 helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                '''
             }
          }
@@ -118,12 +119,12 @@ pipeline {
                steps {
                   container('docker') {
                      sh '''
-                     apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
-                     aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                     aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                     aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-                     docker build -t ${ECR_REPO_NODEJS}:${BUILD_ID} .
-                     docker push ${ECR_REPO_NODEJS}:${BUILD_ID}
+                       apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
+                       aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                       aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                       aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                       docker build -t ${ECR_REPO_NODEJS}:${BUILD_ID} .
+                       docker push ${ECR_REPO_NODEJS}:${BUILD_ID}
                      '''
                   }
                }
@@ -132,12 +133,12 @@ pipeline {
                steps {
                   container('docker') {
                      sh '''
-                     apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
-                     aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-                     aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-                     aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
-                     docker build -t ${ECR_REPO_PYTHON}:${BUILD_ID} .
-                     docker push ${ECR_REPO_PYTHON}:${BUILD_ID}
+                       apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
+                       aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+                       aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+                       aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                       docker build -t ${ECR_REPO_PYTHON}:${BUILD_ID} .
+                       docker push ${ECR_REPO_PYTHON}:${BUILD_ID}
                      '''
                   }
                }
@@ -153,12 +154,12 @@ pipeline {
                steps {
                   container('deploy-helm') {
                      sh '''
-                     apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-                     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-                     chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-                     mkdir -p $HOME/.kube
-                     cp $KUBE_CONFIG $HOME/.kube/config
-                     helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+                       apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                       curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+                       chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+                       mkdir -p $HOME/.kube
+                       cp $KUBE_CONFIG $HOME/.kube/config
+                       helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                      '''
                   }
                }
@@ -167,12 +168,12 @@ pipeline {
                steps {
                container('deploy-helm') {
                   sh '''
-                  apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-                  mkdir -p $HOME/.kube
-                  cp $KUBE_CONFIG $HOME/.kube/config
-                  helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+                    apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+                    chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+                    mkdir -p $HOME/.kube
+                    cp $KUBE_CONFIG $HOME/.kube/config
+                    helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                   '''
                   }
                }
