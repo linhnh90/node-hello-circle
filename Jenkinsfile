@@ -5,6 +5,12 @@ pipeline {
          yamlFile 'KubernetesPod.yaml'
       }
    }
+   parameters {
+      choice(
+         choices: 'all\nnodejs\npython'
+         name: 'BUILD_APP'
+      )
+   }
    
    environment { 
 
