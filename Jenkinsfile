@@ -90,7 +90,7 @@ pipeline {
             }
          }
       }
-   }
+      
    //    stage('[ALL] Build and Push all') {
    //       when {
    //          params.BUILD_APP == 'all'
