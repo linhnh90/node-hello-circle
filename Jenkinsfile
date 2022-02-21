@@ -8,7 +8,7 @@ pipeline {
    parameters {
       choice(
          choices: ['all', 'nodejs', 'python'],
-         description: ''
+         description: '',
          name: 'BUILD_APP'
       )
    }
