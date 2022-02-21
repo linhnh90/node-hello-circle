@@ -68,39 +68,39 @@ pipeline {
       }
 
       stage('[NODEJS] Deploy Nodejs') {
-            when {
-                return params.ENVIROMENT == 'nodejs'
-	         }
-            steps {
-               container('deploy-helm') {
-                  sh '''
-                  apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-                  mkdir -p $HOME/.kube
-                  cp $KUBE_CONFIG $HOME/.kube/config
-                  helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
-                '''
-               }
+         when {
+               return params.ENVIROMENT == 'nodejs'
+         }
+         steps {
+            container('deploy-helm') {
+               sh '''
+               apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+               curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+               chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+               mkdir -p $HOME/.kube
+               cp $KUBE_CONFIG $HOME/.kube/config
+               helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+               '''
             }
+         }
       }
 
       stage('[PYTHON] Deploy Python') {
-            when {
-                return params.ENVIROMENT == 'python'
-	         }
-            steps {
-               container('deploy-helm') {
-                  sh '''
-                  apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
-                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-                  mkdir -p $HOME/.kube
-                  cp $KUBE_CONFIG $HOME/.kube/config
-                  helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
-                '''
-               }
+         when {
+               return params.ENVIROMENT == 'python'
+         }
+         steps {
+            container('deploy-helm') {
+               sh '''
+               apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+               curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+               chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+               mkdir -p $HOME/.kube
+               cp $KUBE_CONFIG $HOME/.kube/config
+               helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
+               '''
             }
+         }
       }
 
       stage('[ALL] Build and Push all') {
@@ -138,7 +138,7 @@ pipeline {
             }
          }
       }
-      stages('[all] Deploy all') {
+      stage('[all] Deploy all') {
          when {
             return params.ENVIROMENT == 'all'
          }
