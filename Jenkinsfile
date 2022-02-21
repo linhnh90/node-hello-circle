@@ -53,6 +53,8 @@ pipeline {
             }
          }
       }
+   }
+}
       
    //    stage('[PYTHON] Build & push python') {
    //       when {
@@ -181,4 +183,4 @@ pipeline {
    //       }
    //    }
    // }
-}
+// }
