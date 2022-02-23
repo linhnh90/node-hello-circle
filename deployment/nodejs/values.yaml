@@ -5,7 +5,7 @@ certManager: letsencrypt-dev
 tlsSecretName: nodejs-secret
 image: 130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest
 imagePullPolicy: Always
-imagePullSecrets: nodejs-registry-aws
+imagePullSecrets: regcred
 containerPort: 3000
 services:
   type: NodePort
