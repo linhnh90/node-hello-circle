@@ -185,7 +185,7 @@ pipeline {
                     chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                     mkdir -p $HOME/.kube
                     cp $KUBE_CONFIG $HOME/.kube/config
-                    helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_PYTHON}:${BUILD_ID}" --set app_version="${BUILD_ID}" --set app_env="master"
+                    helm upgrade --install -n python python-deployment deployment/python --set app_version="${BUILD_ID}",app_env="master",image="${ECR_REPO_PYTHON}:${BUILD_ID}"
                   '''
                   }
                }
