@@ -140,7 +140,7 @@ pipeline {
             }
             stage('[PYTHON] Build & push python') {
                steps {
-                  container('docker') {
+                  container('docker-02') {
                      sh '''
                        apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && rm -rf /var/cache/apk/*
                        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
@@ -178,7 +178,7 @@ pipeline {
             }
             stage('[PYTHON] Deploy python') {
                steps {
-               container('deploy-helm') {
+               container('deploy-helm-02') {
                   sh '''
                     apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-cache curl && rm -rf /var/cache/apk/*
                     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
