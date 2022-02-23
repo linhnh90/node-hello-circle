@@ -22,6 +22,7 @@ pipeline {
       
       AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
       AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+      KUBE_CONFIG = credentials('KUBE_CONFIG')
       AWS_DEFAULT_REGION    = 'ap-southeast-1'
 	//AWS_DEFAULT_REGION    = 'us-east-1'
 	AWS_DEFAULT_OUTPUT    = 'json'
@@ -169,7 +170,7 @@ pipeline {
                        curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                        chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                        mkdir -p $HOME/.kube
-                       echo $KUBE_CONFIG > $HOME/.kube/config
+                       cp $KUBE_CONFIG $HOME/.kube/config
                        helm upgrade --install -n nodejs nodejs-deployment deployment --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                      '''
                   }
