@@ -109,7 +109,7 @@ pipeline {
                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
-                 echo $KUBE_CONFIG > $HOME/.kube/config
+                 cp $KUBE_CONFIG $HOME/.kube/config
                  helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                '''
             }
@@ -184,7 +184,7 @@ pipeline {
                     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                     chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                     mkdir -p $HOME/.kube
-                    echo $KUBE_CONFIG > $HOME/.kube/config
+                    cp $KUBE_CONFIG $HOME/.kube/config
                     helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_NODEJS}:${BUILD_ID}"
                   '''
                   }
