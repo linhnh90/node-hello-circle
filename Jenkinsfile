@@ -104,7 +104,7 @@ pipeline {
          steps {
             container('deploy-helm') {
                sh '''
-                 apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                 apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-cache curl && rm -rf /var/cache/apk/*
                  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
@@ -163,7 +163,7 @@ pipeline {
                steps {
                   container('deploy-helm') {
                      sh '''
-                       apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-chace curl && rm -rf /var/cache/apk/*
+                       apk add --no-cache python3 py3-pip && pip3 install --upgrade pip && pip3 install awscli && apk add --no-cache curl && rm -rf /var/cache/apk/*
                        curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                        chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                        mkdir -p $HOME/.kube
