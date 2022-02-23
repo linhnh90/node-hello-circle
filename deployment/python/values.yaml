@@ -9,3 +9,10 @@ imagePullSecrets: regcred
 containerPort: 5000
 services:
   type: NodePort
+app_version: unknow
+app_env: unknow
+# env:
+  # - name: app_version
+  #   value: unknow
+  # - name: app_env
+  #   value: unknow

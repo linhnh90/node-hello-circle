@@ -37,6 +37,10 @@ spec:
           env:
             - name: PORT
               value: {{ default 8080 .Values.containerPort | quote }}
+            - name: app_version
+              value: {{ .Values.app_version }}
+            - name: app_env
+              value: {{ .Values.app_env }}
             {{- range .Values.env}}
             - name: {{ .name }}
             {{- if hasKey . "valueFrom" }}
