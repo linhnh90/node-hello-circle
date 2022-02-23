@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.serviceName}}-deployment
+  labels:
+    app: {{.Values.serviceName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceName }}
+  minReadySeconds: 5
+  revisionHistoryLimit: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceName }}
+      annotations:
+        linkerd.io/inject: "enabled"
+        rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.podAnnotations -}}
+        {{- toYaml .Values.podAnnotations | trim | nindent 8 }}
+        {{- end }}
+    spec:
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets }}
+      containers:
+        - image: {{ .Values.image }}
+          name: {{ .Values.serviceName }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          env:
+            - name: PORT
+              value: {{ default 8080 .Values.containerPort | quote }}
+            {{- range .Values.env}}
+            - name: {{ .name }}
+            {{- if hasKey . "valueFrom" }}
+              valueFrom:
+                {{- if hasKey .valueFrom "secretKeyRef" }}
+                secretKeyRef:
+                  name: {{  .valueFrom.secretKeyRef.name }}
+                  key: {{  .valueFrom.secretKeyRef.key }}
+                {{ else }}
+                configMapKeyRef:
+                  name: {{ .valueFrom.configMapKeyRef.name }}
+                  key: {{  .valueFrom.configMapKeyRef.key }}
+                {{ end }}
+              {{ else }}
+              value: {{ .value }}
+              {{ end }}
+            {{- end }}
+
+            {{- range .Values.urlServices }}
+            - name: {{ .name }}
+            {{- if hasKey . "valueFrom" }}
+              valueFrom:
+                {{- if hasKey .valueFrom "secretKeyRef" }}
+                secretKeyRef:
+                  name: {{  .valueFrom.secretKeyRef.name }}
+                  key: {{  .valueFrom.secretKeyRef.key }}
+                {{ else }}
+                configMapKeyRef:
+                  name: {{ .valueFrom.configMapKeyRef.name }}
+                  key: {{  .valueFrom.configMapKeyRef.key }}
+                {{ end -}}
+              {{ else }}
+              value: {{ .value }}
+              {{- end -}}
+            {{- end }}
+
+          {{- if hasKey .Values "envFrom" }}
+          envFrom:
+            {{- range .Values.envFrom }}
+            {{- if hasKey . "configMapRef" }}
+            - configMapRef:
+                name: {{ .name }}
+            {{- end }}
+            {{- if hasKey . "secretRef" }}
+            - secretRef:
+                name: {{ .name }}
+            {{- end }}
+            {{ end }}
+          {{- end }}
+          ports:
+            - name: "{{.Values.containerNamePort}}-port"
+              containerPort: {{ default 8080 .Values.containerPort }}
+      restartPolicy: {{ default "Always" .Values.restartPolicy}}
