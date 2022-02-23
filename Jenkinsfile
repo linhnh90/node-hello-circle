@@ -130,6 +130,7 @@ pipeline {
                        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
                        aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
                        aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                       cd nodejs/
                        docker build -t ${ECR_REPO_NODEJS}:${BUILD_ID} .
                        docker push ${ECR_REPO_NODEJS}:${BUILD_ID}
                      '''
@@ -144,6 +145,7 @@ pipeline {
                        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
                        aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
                        aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin 130228678771.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+                       cd python/
                        docker build -t ${ECR_REPO_PYTHON}:${BUILD_ID} .
                        docker push ${ECR_REPO_PYTHON}:${BUILD_ID}
                      '''
