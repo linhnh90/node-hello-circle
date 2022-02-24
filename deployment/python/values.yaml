@@ -11,6 +11,4 @@ services:
   type: NodePort
 env:
   - name: APP_VERSION
-    value: unknow
-  - name: APP_ENV
-    value: unknow
+    value: latest
