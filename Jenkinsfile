@@ -90,7 +90,7 @@ pipeline {
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
                  cp $KUBE_CONFIG $HOME/.kube/config
-                 sed -e "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/nodejs/values.yaml
+                 sed -ie "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/nodejs/values.yaml
                  helm upgrade --install -n nodejs nodejs-deployment deployment/nodejs --set image="${ECR_REPO_NODEJS}:${BUILD_ID}" 
                '''
             }
@@ -111,7 +111,7 @@ pipeline {
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
                  cp $KUBE_CONFIG $HOME/.kube/config
-                 sed -e "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/python/values.yaml
+                 sed -ie "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/python/values.yaml
                  helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_PYTHON}:${BUILD_ID}" 
                '''
             }
@@ -173,7 +173,7 @@ pipeline {
                        chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                        mkdir -p $HOME/.kube
                        cp $KUBE_CONFIG $HOME/.kube/config
-                       sed -e "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/nodejs/values.yaml
+                       sed -ie "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/nodejs/values.yaml
                        helm upgrade --install -n nodejs nodejs-deployment deployment/nodejs --set image="${ECR_REPO_NODEJS}:${BUILD_ID}" 
                      '''
                   }
@@ -188,7 +188,7 @@ pipeline {
                     chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                     mkdir -p $HOME/.kube
                     cp $KUBE_CONFIG $HOME/.kube/config
-                    sed -e "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/python/values.yaml
+                    sed -ie "s/app_version: unknow/app_version: ${BUILD_ID}/g" deployment/python/values.yaml
                     helm upgrade --install -n python python-deployment deployment/python --set image="${ECR_REPO_PYTHON}:${BUILD_ID}"
                   '''
                   }

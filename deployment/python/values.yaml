@@ -10,7 +10,7 @@ containerPort: 5000
 services:
   type: NodePort
 app_version: unknow
-app_env: unknow
+app_env: master
 # env:
   # - name: app_version
   #   value: unknow
