@@ -90,7 +90,7 @@ pipeline {
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
                  cp $KUBE_CONFIG $HOME/.kube/config
-                 helm upgrade --install -n nodejs nodejs-deployment deployment/nodejs --set image="${ECR_REPO_NODEJS}:${BUILD_ID}" --set app_version="${BUILD_ID}" --set app_env="master"
+                 helm upgrade --install -n nodejs nodejs-deployment deployment/nodejs --set image="130228678771\.dkr\.ecr\.ap-southeast-1\.amazonaws\.com/nodejs:${BUILD_ID}",app_version="${BUILD_ID}",app_env="master"
                '''
             }
          }
