@@ -90,7 +90,7 @@ pipeline {
                  chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
                  mkdir -p $HOME/.kube
                  cp $KUBE_CONFIG $HOME/.kube/config
-                 sed -i "s/latest/${BUILD_ID}/g" deployment/nodejs/values.yaml
+                 sed -e 's/latest/$BUILD_ID/g' deployment/nodejs/values.yaml
                  helm upgrade --install -n nodejs nodejs-deployment deployment/nodejs --set app_version="${BUILD_ID},app_env="master" 
                '''
             }
