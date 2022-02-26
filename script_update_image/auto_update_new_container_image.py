@@ -1,7 +1,10 @@
 from datetime import datetime
+from email.mime import image
+from http import client
 from time import sleep
 import boto3
 import os
+import docker
  
 def write_log(filename,data):
     if os.path.isfile(filename):
@@ -64,32 +67,30 @@ def check_list_docker_running():
 """ """
 check_image = 'python'
 version, push_at = get_latest_image(check_image)
-print(f'app {version} pushed at {push_at}')
+print(f'app {check_image} {version} pushed at {push_at}')
 list_image = check_list_docker_running()
 print(list_image)
 for i in list_image:
     if check_image in str(i).split(':'):
         if version != str(i).split(':')[1]:
-            docker_stop = "docker container stop " + check_image + " && " + "docker container rm " + check_image 
-            docker_run = "docker run --name " + check_image +" -d -p 3000:3000 130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:" + version
+            print("stop and remove", check_image)
+            docker_stop = "docker container stop " + check_image + " && " + "docker container rm " + check_image
             os.system(docker_stop)
-            sleep(10)
-            os.system(docker_run)
-            sleep(20)
+            client = docker.from_env()
+            if check_image == "nodejs": 
+                print("start nodejs", version)
+                image = "130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:" + version
+                client.containers.run(image, ports={'3000/tcp': 3000}, name='nodejs', detach=True)
+                sleep(20)
+            else:
+                print("start python", version)
+                image = "130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/python:" + version
+                client.containers.run(image, ports={'5000/tcp': 5000}, name='python', detach=True)
+                sleep(20)
             data_log = "updated image " + check_image + " version " + version + " at " + print_time()
             write_log('nodejs_auto_update.log', data_log )
 
     else:
         data_log = "current image " + check_image + " is latest version " + version + " at " +print_time()
         write_log('nodejs_auto_update.log', data_log )
-"""compare and update docker run if need"""
-# if version == current_image_tag:
-#     data_log = "current image is latest version" + print_time()
-#     write_log('nodejs_auto_update.log', data_log )
-# else:
-#     docker_stop = "docker container stop $(docker ps  | awk '{print $1}' | grep -v CONTAINER)"
-#     docker_run = "docker run -d -p 3000:3000 130228678771.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:" + version
-#     os.system(docker_stop)
-#     os.system(docker_run)
-#     data_log = "updated image " + print_time()
-#     write_log('nodejs_auto_update.log', data_log )
+
