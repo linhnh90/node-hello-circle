@@ -67,9 +67,9 @@ def check_list_docker_running():
 """ """
 check_image = 'python'
 version, push_at = get_latest_image(check_image)
-print(f'app {check_image} {version} pushed at {push_at}')
+print(f'new ecr image version {check_image} {version} pushed at {push_at}')
 list_image = check_list_docker_running()
-print(list_image)
+print("current image version",list_image)
 for i in list_image:
     if check_image in str(i).split(':'):
         if version != str(i).split(':')[1]:
