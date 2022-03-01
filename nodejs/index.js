@@ -1,7 +1,7 @@
 const http = require('http');
 const { hostname } = require('os');
 const port = process.env.PORT || 3000;
-const hostname = process.env.HOSTNAME || "unknow";
+// const hostname = process.env.HOSTNAME || "unknow";
 const app_version = process.env.APP_VERSION || "unknow";
 
 const server = http.createServer((req, res) => {
